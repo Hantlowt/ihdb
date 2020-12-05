@@ -58,6 +58,13 @@ class Node:
         self.__relations__[name] += [node.__category__ + ':' + node.id]
         self.save()
 
+    def delete_relation(self, name, node=None):
+        if node is not None:
+            self.__relations__[name] = [n for n in self.__relations__[name] if n != node.__category__+':'+node.id]
+        else:
+            self.__relations__.pop(name)
+        self.save()
+
     def get_relation(self, name):
         return self.get_relations(name)[0]
 
