@@ -2,7 +2,7 @@ import setuptools
 
 setuptools.setup(
     name="ihdb",
-    version="0.0.1",
+    version="0.0.2",
     description="ihdb",
     long_description="I Hate Database. It's like SQLITE but with graph. Perfect for prototype. No tables, no documents",
     url="https://github.com/Hantlowt/ihdb",

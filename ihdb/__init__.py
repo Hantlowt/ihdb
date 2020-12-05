@@ -29,7 +29,12 @@ class Node:
     def __setitem__(self, key, value):
         if type(value) == Node:
             self.__relations__[key] = []
-            self.add_relation(key, value)
+            if type(key) == tuple:
+                self.add_relation(key[0], value)
+                value.add_relation(key[1], self)
+            else:
+                self.add_relation(key, value)
+                value.add_relation(key, self)
         else:
             is_index = self.__ihdb__.index_exist(self.__category__, key)
             if is_index:
@@ -48,13 +53,10 @@ class Node:
             self.__ihdb__.delete(self)
         self.__ihdb__.save(self)
 
-    def add_relation(self, name, node, two_way=False):
+    def add_relation(self, name, node):
         if name not in self.__relations__.keys():
             self.__relations__[name] = []
         self.__relations__[name] += [node.__category__ + ':' + node.id]
-        if two_way:
-            node.add_relation(name, self)
-            node.save()
         self.save()
 
     def get_relation(self, name):
