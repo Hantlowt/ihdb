@@ -28,7 +28,6 @@ class Node:
 
     def __setitem__(self, key, value):
         if type(value) == Node:
-            self.__relations__[key] = []
             if type(key) == tuple:
                 self.add_relation(key[0], value)
                 value.add_relation(key[1], self)
