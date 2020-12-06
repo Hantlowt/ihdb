@@ -20,20 +20,11 @@ class Node:
         result = self.__data__.get(index)
         if result is None:
             result = self.get_relations(index)
-            if len(result) == 0:
-                return None
-            if len(result) == 1:
-                result = result[0]
         return result
 
     def __setitem__(self, key, value):
-        if type(value) == Node:
-            if type(key) == tuple:
-                self.add_relation(key[0], value)
-                value.add_relation(key[1], self)
-            else:
-                self.add_relation(key, value)
-                value.add_relation(key, self)
+        if type(value) == Node or (type(value) == list and all(type(n) == Node for n in value)):
+            self.add_relation(key, value)
         else:
             is_index = self.__ihdb__.index_exist(self.__category__, key)
             if is_index:
@@ -53,9 +44,12 @@ class Node:
         self.__ihdb__.save(self)
 
     def add_relation(self, name, node):
-        if name not in self.__relations__.keys():
+        if type(node) == list:
             self.__relations__[name] = []
-        self.__relations__[name] += [node.__category__ + ':' + node.id]
+            for n in node:
+                self.__relations__[name] += [n.__category__ + ':' + n.id]
+        else:
+            self.__relations__[name] = [node.__category__ + ':' + node.id]
         self.save()
 
     def delete_relation(self, name, node=None):
