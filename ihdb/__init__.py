@@ -10,14 +10,14 @@ class Node:
         self.__relations__ = node_relations
         self.__ihdb__ = ihdb
         if save:
-            self.__data__ = {}
+            self.data = {}
             for key in node_data.keys():
                 self.__setitem__(key, node_data[key])
         else:
-            self.__data__ = node_data
+            self.data = node_data
 
     def __getitem__(self, index):
-        result = self.__data__.get(index)
+        result = self.data.get(index)
         if result is None:
             result = self.get_relations(index)
         return result
@@ -29,14 +29,14 @@ class Node:
             is_index = self.__ihdb__.index_exist(self.__category__, key)
             if is_index:
                 self.__ihdb__.delete_index_node(self, key)
-            self.__data__[key] = value
+            self.data[key] = value
             self.save()
             if is_index:
                 self.__ihdb__.add_index_node(self, key)
 
     def __iter__(self):
-        for key in self.__data__.keys():
-            yield key, self.__data__[key]
+        for key in self.data.keys():
+            yield key, self.data[key]
 
     def save(self, category_has_changed=False):
         if category_has_changed:
@@ -151,7 +151,7 @@ class Ihdb:
     def nodes(self, category='node', select=None, where=None):
         if select is not None:
             if type(select) == list:
-                result = [{k: r[k] for k in list(r.__data__.keys()) + list(r.__relations__.keys()) if k in select} for r in
+                result = [{k: r[k] for k in list(r.data.keys()) + list(r.__relations__.keys()) if k in select} for r in
                           self.get_nodes_from_category(category, where)]
             else:
                 result = [r[select] for r in self.get_nodes_from_category(category, where)]
@@ -176,7 +176,7 @@ class Ihdb:
         if not os.path.isdir(location):
             os.mkdir(location)
         f = open(location + '/' + node.id, 'w')
-        f.write(str(node.__data__) + '\n')
+        f.write(str(node.data) + '\n')
         f.write(str(node.__relations__))
         f.close()
 
