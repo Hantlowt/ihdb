@@ -125,7 +125,7 @@ class Ihdb:
         return node
 
     def get_all_categories(self):
-        return [x[0] for x in os.walk(self.folder_path)]
+        return [x for x in os.listdir(self.folder_path) if os.path.isdir(self.folder_path+'/'+x)]
 
     def get_nodes_from_category(self, category='node', where=None):
         folder = self.folder_path + '/' + category
