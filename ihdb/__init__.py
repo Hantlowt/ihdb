@@ -6,7 +6,7 @@ from glob import glob
 class Node:
     def __init__(self, node_id, node_category, node_data, node_relations, ihdb, save=True):
         self.id = node_id
-        self.__category__ = node_category
+        self.category = node_category
         self.relations = node_relations
         self.__ihdb__ = ihdb
         if save:
@@ -26,7 +26,7 @@ class Node:
         if type(value) == Node or (type(value) == list and all(type(n) == Node for n in value)):
             self.add_relation(key, value)
         else:
-            is_index = self.__ihdb__.index_exist(self.__category__, key)
+            is_index = self.__ihdb__.index_exist(self.category, key)
             if is_index:
                 self.__ihdb__.delete_index_node(self, key)
             self.data[key] = value
@@ -47,14 +47,14 @@ class Node:
         if type(node) == list:
             self.relations[name] = []
             for n in node:
-                self.relations[name] += [n.__category__ + ':' + n.id]
+                self.relations[name] += [n.category + ':' + n.id]
         else:
-            self.relations[name] = [node.__category__ + ':' + node.id]
+            self.relations[name] = [node.category + ':' + node.id]
         self.save()
 
     def delete_relation(self, name, node=None):
         if node is not None:
-            self.relations[name] = [n for n in self.relations[name] if n != node.__category__+':'+node.id]
+            self.relations[name] = [n for n in self.relations[name] if n != node.category+':'+node.id]
         else:
             self.relations.pop(name)
         self.save()
@@ -85,7 +85,7 @@ class Ihdb:
         return os.path.isdir(self.folder_path + '/' + category + '/' + key)
 
     def delete_index_node(self, node, key):
-        folder_path = self.folder_path + '/' + node.__category__ + '/' + key
+        folder_path = self.folder_path + '/' + node.category + '/' + key
         obj = node[key]
         if obj is not None:
             file_path = folder_path + '/' + str(obj)
@@ -101,7 +101,7 @@ class Ihdb:
                 file.close()
 
     def add_index_node(self, node, key):
-        folder_path = self.folder_path + '/' + node.__category__ + '/' + key
+        folder_path = self.folder_path + '/' + node.category + '/' + key
         obj = node[key]
         if obj is not None:
             file_path = folder_path + '/' + str(obj)
@@ -172,10 +172,10 @@ class Ihdb:
         return None
 
     def delete(self, node):
-        os.remove(self.folder_path + '/' + node.__category__ + '/' + node.id)
+        os.remove(self.folder_path + '/' + node.category + '/' + node.id)
 
     def save(self, node):
-        location = self.folder_path + '/' + node.__category__
+        location = self.folder_path + '/' + node.category
         if not os.path.isdir(location):
             os.mkdir(location)
         f = open(location + '/' + node.id, 'w')
