@@ -7,7 +7,7 @@ class Node:
     def __init__(self, node_id, node_category, node_data, node_relations, ihdb, save=True):
         self.id = node_id
         self.__category__ = node_category
-        self.__relations__ = node_relations
+        self.relations = node_relations
         self.__ihdb__ = ihdb
         if save:
             self.data = {}
@@ -45,25 +45,25 @@ class Node:
 
     def add_relation(self, name, node):
         if type(node) == list:
-            self.__relations__[name] = []
+            self.relations[name] = []
             for n in node:
-                self.__relations__[name] += [n.__category__ + ':' + n.id]
+                self.relations[name] += [n.__category__ + ':' + n.id]
         else:
-            self.__relations__[name] = [node.__category__ + ':' + node.id]
+            self.relations[name] = [node.__category__ + ':' + node.id]
         self.save()
 
     def delete_relation(self, name, node=None):
         if node is not None:
-            self.__relations__[name] = [n for n in self.__relations__[name] if n != node.__category__+':'+node.id]
+            self.relations[name] = [n for n in self.relations[name] if n != node.__category__+':'+node.id]
         else:
-            self.__relations__.pop(name)
+            self.relations.pop(name)
         self.save()
 
     def get_relation(self, name):
         return self.get_relations(name)[0]
 
     def get_relations(self, name):
-        relations = self.__relations__.get(name)
+        relations = self.relations.get(name)
         if relations is None:
             return []
         result = []
@@ -154,7 +154,7 @@ class Ihdb:
     def nodes(self, category='node', select=None, where=None):
         if select is not None:
             if type(select) == list:
-                result = [{k: r[k] for k in list(r.data.keys()) + list(r.__relations__.keys()) if k in select} for r in
+                result = [{k: r[k] for k in list(r.data.keys()) + list(r.relations.keys()) if k in select} for r in
                           self.get_nodes_from_category(category, where)]
             else:
                 result = [r[select] for r in self.get_nodes_from_category(category, where)]
@@ -180,7 +180,7 @@ class Ihdb:
             os.mkdir(location)
         f = open(location + '/' + node.id, 'w')
         f.write(str(node.data) + '\n')
-        f.write(str(node.__relations__))
+        f.write(str(node.relations))
         f.close()
 
     def create_node(self, node_category='node', node_data=None):
