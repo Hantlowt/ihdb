@@ -173,6 +173,8 @@ class Ihdb:
 
     def delete(self, node):
         os.remove(self.folder_path + '/' + node.category + '/' + node.id)
+        if not os.listdir(self.folder_path + '/' + node.category):
+            os.rmdir(self.folder_path + '/' + node.category)
 
     def save(self, node):
         location = self.folder_path + '/' + node.category
