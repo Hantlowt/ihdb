@@ -117,6 +117,7 @@ class Ihdb:
 
     def read_node_from_file(self, path):
         f = open(path, 'r')
+        path = path.replace('\', '/')
         path = path.split('/')
         content = f.read()
         content = content.split('\n')
